@@ -1952,6 +1952,8 @@ class TestParseResponse:
     def test_parse_response_qwen3_5_tool_call_without_closing_think(self, model_name):
         if model_name != "trl-internal-testing/tiny-Qwen3_5ForConditionalGeneration-Think":
             pytest.skip("Test specifically covers Qwen3.5 think template where <think> is prefilled.")
+        if not _SUPPORTS_RESPONSE_TEMPLATE:
+            pytest.skip("Prefilled thinking test requires new-style response_template parser (transformers >= 5.13).")
         # Qwen3.5 generation prompt prefills <think>\n. If the model outputs a tool call without emitting </think>,
         # the reasoning region should close at <tool_call> and parse tool_calls properly (fixes #8050).
         tokenizer = AutoTokenizer.from_pretrained("trl-internal-testing/tiny-Qwen3_5ForConditionalGeneration-Think")
