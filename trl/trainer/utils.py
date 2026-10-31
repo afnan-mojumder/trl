@@ -1662,12 +1662,7 @@ def add_fused_lm_head(
             hidden_states = backbone_outputs.last_hidden_state
             labels = shift_labels
         if text_config.model_type in ("modernbert_decoder", "modernbert-decoder"):
-            prediction_head = getattr(self, "lm_head", None)
-            if prediction_head is not None:
-                head_param = next(prediction_head.parameters(), None)
-                if head_param is not None:
-                    hidden_states = hidden_states.to(head_param.device)
-                hidden_states = prediction_head(hidden_states)
+            hidden_states = self.lm_head(hidden_states)
         lm_head = self.get_output_embeddings()
         # With the model split across devices (`device_map`), the backbone can end on another device than the head
         hidden_states = hidden_states.to(lm_head.weight.device)
